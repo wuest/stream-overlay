@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <meta charset="UTF-8"/>
+  <title>Stream Layout</title>
+  <link rel="stylesheet" type="text/css" href="/overlay.css"/>
+ </head>
+ <body>
+  <div id="main"></div>
+  <div id="mask"></div>
+ </body>
+ <script src="/global.js"></script>
+ <script src="/overlay.js"></script>
+ <script>
+var node = document.getElementById('main');
+var app = Elm.Main.embed(node, {
+ webPort:webPort
+});
+ </script>
+</html>

@@ -1,0 +1,92 @@
+html, body {
+ margin:0;
+ height:100%;
+}
+
+div#main {
+ position: absolute;
+ left:0px;
+ top:0px;
+ width:1920px;
+ height:1080px;
+}
+
+div#mask {
+ position: absolute;
+ left:0px;
+ top:0px;
+ width:1920px;
+ height:1080px;
+ background-color:#32004a;
+ background-image: url("./streambg.png");
+ mask-image:url(overlay.svg);
+ -webkit-mask-image:url(overlay.svg);
+ mask-mode:luminance;
+ -webkit-mask-mode:luminance;
+}
+
+div#notification {
+ position: absolute;
+ left: 588px;
+ top: 100px;
+ width: 1296px;
+
+ -webkit-animation-duration: 1s;
+ animation-duration: 1s;
+ -webkit-animation-fill-mode: both;
+ animation-fill-mode: both;
+
+ font-family: sans-serif;
+ font-size: 24pt;
+ font-weight: bold;
+ text-align: center;
+ color: white;
+ -webkit-text-stroke-width: 1px;
+ -webkit-text-stroke-color: black;
+}
+
+.invisible {
+ display:none;
+}
+
+div#notification span.donorName {
+ color: red;
+}
+
+div#notification span.amount {
+ color: red;
+}
+
+div#notification span.donationMessage {
+ font-size: 18pt;
+ font-weight: normal;
+ -webkit-text-stroke-width: 0px;
+}
+
+div.fadein {
+ -webkit-animation: FADEIN;
+}
+
+div.fadeout {
+ -webkit-animation: FADEOUT;
+}
+
+@-webkit-keyframes FADEIN {
+ 0%   { opacity: 0; }
+ 100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+ 0%   { opacity: 0; }
+ 100% { opacity: 1; }
+}
+
+@-webkit-keyframes FADEOUT {
+ 0%   { opacity: 1; }
+ 100% { opacity: 0; }
+}
+
+@keyframes fadeOut {
+ 0%   { opacity: 1; }
+ 100% { opacity: 0; }
+}

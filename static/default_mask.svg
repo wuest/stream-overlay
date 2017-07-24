@@ -1,0 +1,10 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1920" height="1080">
+ <defs>
+  <mask id="clip">
+   <rect x="0" y="0" width="1920" height="1080" fill="white" id="opaque-mask"/>
+   <rect x="62" y="36" width="428" height="324" rx="10" ry="10" fill="black" id="webcam"/>
+   <rect x="588" y="36" width="1296" height="1008" fill="black" id="4x3-capture"/>
+  </mask>
+ </defs>
+ <rect x="0" y="0" width="1920" height="1080" mask="url(#clip)" style="fill:black;"/>
+</svg>

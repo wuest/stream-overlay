@@ -1,0 +1,49 @@
+name:                stream-overlay
+version:             0.1.0.0
+synopsis:            Overlay (via HTTP) and IRC bot for live streamers
+description:         Provides HTTP and IRC interfaces to various services for the purpose of enhancing the user experience of viewers.
+homepage:            https://github.com/wuest/stream-overlay
+license:             BSD3
+license-file:        LICENSE
+author:              Tina Wuest
+maintainer:          tina@wuest.me
+copyright:           2017 Tina Wuest           
+category:            Web
+build-type:          Simple
+extra-source-files:  ChangeLog.md
+cabal-version:       >=1.10
+
+source-repository head
+  type: git
+  location: https://github.com/wuest/stream-overlay.git
+
+executable stream-overlay
+  main-is:             Main.hs
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options:         -static -Wall -fwarn-implicit-prelude -fwarn-monomorphism-restriction -threaded
+  other-modules:
+    Opts,
+    Server.Const,
+    Server.Json,
+    Twitch.IRC,
+    Twitch.Bot,
+    Web
+  build-depends:
+    base           >= 4.9 && < 4.10,
+    text           >= 1.2 && < 1.3,
+    bytestring     >= 0.10 && < 0.11,
+    extralife      >= 0.1 && < 0.2,
+    aeson          >= 1.0 && < 1.1,
+    time           >= 1.6 && < 1.7,
+    directory      >= 1.3 && < 1.4,
+    mtl            >= 2.2 && < 2.3,
+    network        >= 2.6 && < 2.7,
+    stm            >= 2.4 && < 2.5,
+    wai            >= 3.2 && < 3.3,
+    wai-websockets >= 3.0 && < 3.1,
+    wai-middleware-static >= 0.8 && < 0.9,
+    websockets     >= 0.10 && < 0.11,
+    warp           >= 3.2 && < 3.3,
+    http-types     >= 0.9 && < 0.10,
+    file-embed     >= 0.0 && < 0.1
