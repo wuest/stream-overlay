@@ -37,7 +37,7 @@ defaultOptions = Options { optVerbose  = False
                          , ircPass     = "oauth_token"
                          , ircChannel  = "stream_channel"
                          , webPort     = 8000
-                         , extralifeID = (negate 1)
+                         , extralifeID = negate 1
                          }
 
 version :: String

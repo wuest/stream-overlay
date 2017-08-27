@@ -3,6 +3,7 @@
 module Main ( main ) where
 
 import Control.Monad          ( unless, when )
+import Control.Exception      ( try )
 import Data.Time              ( UTCTime, getCurrentTime )
 import Web.ExtraLife.API      ( recentDonations )
 import Web.ExtraLife.Donation ( Donation, createdOn, message, donorName, donationAmount)
@@ -14,6 +15,7 @@ import qualified Data.Text                      as Text
 import qualified Data.ByteString                as BS
 import qualified Data.ByteString.Lazy           as LBS
 import qualified Numeric                        as Num   ( showFFloat )
+import qualified Network.HTTP.Client            as HTTP  ( HttpException )
 import qualified System.Directory               as Dir
 
 import qualified Network.Wai.Handler.Warp       as Warp
@@ -31,11 +33,14 @@ import qualified Twitch.Bot                     as TwitchBot
 watchDonations :: Bool -> Int -> STM.TChan Donation -> UTCTime -> IO ()
 watchDonations verbose elid broadcast prev = do
     Concurrent.threadDelay $ seconds 10
-    donations <- recentDonations elid
-    let donation = nextDonation prev donations
-        next = nextTimestamp prev donation
-    alertDonation verbose broadcast donation
-    watchDonations verbose elid broadcast next
+    edonations <- try $ recentDonations elid
+    case edonations of
+        Left e -> return (e :: HTTP.HttpException) >> watchDonations verbose elid broadcast prev
+        Right donations -> do
+            let donation = nextDonation prev donations
+                next = nextTimestamp prev donation
+            alertDonation verbose broadcast donation
+            watchDonations verbose elid broadcast next
   where
     seconds :: Int -> Int
     seconds = (*1000000)
@@ -109,7 +114,7 @@ main = do
         _ <- Concurrent.forkIO $ TwitchBot.broadcast irc chan
         return ()
 
-    when ((extralifeID options) > (negate 1)) $ do
+    when (extralifeID options > negate 1) $ do
         _ <- Concurrent.forkIO $ watchDonations (optVerbose options) (extralifeID options) chan time
         return ()
 
