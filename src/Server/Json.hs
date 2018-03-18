@@ -11,8 +11,8 @@ import GHC.Generics ( Generic )
 data Message = Message
     { userHandle :: Text
     , eventType  :: Text
-    , amount     :: Float
-    , message    :: Text
+    , amount     :: Maybe Float
+    , message    :: Maybe Text
     } deriving ( Show, Generic )
 instance FromJSON Message
 instance ToJSON Message

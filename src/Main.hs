@@ -64,7 +64,6 @@ alertDonation verbose chan (Just donation) = do
     STM.atomically $ STM.writeTChan chan donation
     when verbose $ putStrLn $
         "Donation: " ++ name ++ " (" ++ amount ++ ") " ++ msg
-            
   where
     name = case donorName donation of
         Nothing -> "Anonymous"
@@ -98,7 +97,6 @@ combinedConfig options = do
     return options
   where
     path = optConfig options
-
 
 main :: IO ()
 main = do

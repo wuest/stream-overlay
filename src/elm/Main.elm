@@ -9,8 +9,8 @@ import Time                          as Time
 
 type alias Alert = { userHandle : String
                    , eventType : String
-                   , amount : Float
-                   , message : String
+                   , amount : Maybe Float
+                   , message : Maybe String
                    }
 
 type alias Model = { activeAlert : Maybe Alert
@@ -28,13 +28,15 @@ type AnimationStatus = FadeIn Time.Time
 
 type alias Flags = { webPort : String }
 
+type alias TagList msg = List (Html.Html msg)
+
 -- Decoding data
 
 alertDecoder : Json.Decoder Alert
 alertDecoder = Json.map4 Alert ( Json.at [ "userHandle" ] Json.string )
                                ( Json.at [ "eventType" ]  Json.string )
-                               ( Json.at [ "amount" ]     Json.float  )
-                               ( Json.at [ "message" ]    Json.string )
+                               ( Json.at [ "amount" ]     (Json.nullable Json.float) )
+                               ( Json.at [ "message" ]    (Json.nullable Json.string) )
 
 decodeAlert : String -> Result String Alert
 decodeAlert = Json.decodeString alertDecoder
@@ -49,14 +51,30 @@ processAlert model msg =
 
 -- Display data
 
+emptyAlert : TagList msg
+emptyAlert = [ span [] [] ]
+
+showActiveAlert : Maybe Alert -> TagList msg
 showActiveAlert alert = case alert of
-    Just a  -> [ span [ class "donorName" ] [ text <| .userHandle a ]
-               , span [] [ text <| " donated " ]
-               , span [ class "amount" ] [ text (dollarAmount <| .amount a) ]
-               , br [] []
-               , span [ class "donationMessage" ] [ text <| .message a ]
-               ]
-    Nothing -> [ span [] [text "test"]]
+    Just a  -> case (.eventType a) of
+                 "donation" -> donationTags a
+                 _          -> emptyAlert
+    Nothing -> emptyAlert
+
+donationTags : Alert -> TagList msg
+donationTags msg = case (.amount msg) of
+    Just a -> case (.message msg) of
+        Just t -> [ span [ class "donorName" ] [ text <| .userHandle msg ]
+                  , span [] [ text " donated " ]
+                  , span [ class "amount" ] [ text (dollarAmount a) ]
+                  , br [] []
+                  , span [ class "donationMessage" ] [ text t  ]
+                  ]
+        Nothing -> [ span [ class "donorName" ] [ text <| .userHandle msg ]
+                   , span [] [ text " donated " ]
+                   , span [ class "amount" ] [ text (dollarAmount a) ]
+                   ]
+    Nothing -> []
 
 dollarAmount : Float -> String
 dollarAmount f = let cents = toString <| round <| f * 100
@@ -123,8 +141,7 @@ subscriptions model = Sub.batch [ WebSocket.listen (.sockUrl model) Receive
                                 ]
 
 main : Program Flags Model Msg
-main =
-  programWithFlags
+main = programWithFlags
     { init          = init
     , update        = update
     , view          = view

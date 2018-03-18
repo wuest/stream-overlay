@@ -53,8 +53,8 @@ constructMessage donation =
     Text.toStrict $ Text.decodeUtf8 $ Aeson.encode
         Json.Message { Json.userHandle = name
                        , Json.eventType = "donation"
-                       , Json.amount = donationAmount donation
-                       , Json.message = msg
+                       , Json.amount = Just $ donationAmount donation
+                       , Json.message = Just msg
                        }
   where
     name = Maybe.fromMaybe "Anonymous" (donorName donation)
