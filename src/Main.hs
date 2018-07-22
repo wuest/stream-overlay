@@ -6,7 +6,7 @@ import Control.Monad          ( unless, when )
 import Control.Exception      ( try )
 import Data.Time              ( UTCTime, getCurrentTime )
 import Web.ExtraLife.API      ( recentDonations )
-import Web.ExtraLife.Donation ( Donation, createdOn, message, donorName, donationAmount)
+import Web.ExtraLife.Donation ( Donation, createdDateUTC, message, displayName, amount)
 import Prelude
 
 import qualified Control.Concurrent             as Concurrent
@@ -48,13 +48,13 @@ watchDonations verbose elid broadcast prev = do
 nextTimestamp :: UTCTime -> Maybe Donation -> UTCTime
 nextTimestamp x Nothing = x
 nextTimestamp x (Just d) = if x > y then x else y
-  where y = createdOn d
+  where y = createdDateUTC d
 
 nextDonation :: UTCTime -> Maybe [Donation] -> Maybe Donation
 nextDonation _ Nothing = Nothing
 nextDonation _ (Just []) = Nothing
 nextDonation prev (Just (d:ds)) =
-    if createdOn d > prev
+    if createdDateUTC d > prev
         then Just d
         else nextDonation prev $ Just ds
 
@@ -63,16 +63,16 @@ alertDonation _ _ Nothing = return ()
 alertDonation verbose chan (Just donation) = do
     STM.atomically $ STM.writeTChan chan donation
     when verbose $ putStrLn $
-        "Donation: " ++ name ++ " (" ++ amount ++ ") " ++ msg
+        "Donation: " ++ name ++ " (" ++ donated ++ ") " ++ msg
             
   where
-    name = case donorName donation of
+    name = case displayName donation of
         Nothing -> "Anonymous"
         Just n  -> Text.unpack n
     msg = case message donation of
         Nothing -> ""
         Just m  -> Text.unpack m
-    amount = ("$"++) $ Num.showFFloat (Just 2) (donationAmount donation) ""
+    donated = ("$"++) $ Num.showFFloat (Just 2) (amount donation) ""
 
 -- First run setup
 
