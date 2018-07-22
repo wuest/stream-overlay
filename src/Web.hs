@@ -4,7 +4,7 @@ module Web ( server, static, broadcast ) where
 
 import Control.Monad          ( forever )
 import Data.Text              ( Text )
-import Web.ExtraLife.Donation ( Donation, donorName, donationAmount, message )
+import Web.ExtraLife.Donation ( Donation, displayName, amount, message )
 import Prelude
 
 import qualified Control.Concurrent             as Concurrent
@@ -53,11 +53,11 @@ constructMessage donation =
     Text.toStrict $ Text.decodeUtf8 $ Aeson.encode
         Json.Message { Json.userHandle = name
                        , Json.eventType = "donation"
-                       , Json.amount = donationAmount donation
+                       , Json.amount = amount donation
                        , Json.message = msg
                        }
   where
-    name = Maybe.fromMaybe "Anonymous" (donorName donation)
+    name = Maybe.fromMaybe "Anonymous" (displayName donation)
     msg = Maybe.fromMaybe "" (message donation)
 
 nextId :: State -> ClientId

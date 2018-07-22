@@ -4,7 +4,7 @@ module Twitch.Bot ( broadcast, initialize, listen ) where
 
 import Control.Monad          ( forever )
 import Control.Monad.Reader   ( runReaderT )
-import Web.ExtraLife.Donation ( Donation, donorName, donationAmount )
+import Web.ExtraLife.Donation ( Donation, displayName, amount )
 import Numeric                ( showFFloat )
 import Prelude
 
@@ -15,12 +15,12 @@ import qualified Twitch.IRC                     as IRC
 
 constructIRCMessage :: Donation -> String
 constructIRCMessage donation =
-    name ++ " donated " ++ amount ++ " to ExtraLife!"
+    name ++ " donated " ++ donated ++ " to ExtraLife!"
   where
-    name = case donorName donation of
+    name = case displayName donation of
         Nothing -> "Anonymous"
         Just n  -> Text.unpack n
-    amount = ("$"++) $ showFFloat (Just 2) (donationAmount donation) ""
+    donated = ("$"++) $ showFFloat (Just 2) (amount donation) ""
 
 broadcast :: IRC.Bot -> STM.TChan Donation -> IO loop
 broadcast irc broadcastChan = do
